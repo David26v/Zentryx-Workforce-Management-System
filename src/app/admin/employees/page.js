@@ -16,16 +16,16 @@ const Employees = () => {
   const { showAlert } = useAlert();
   const { showDelete } = useDialog();
   const router = useRouter();
-  const {show , hide , isLoading } = useLoading();
+  const { show, hide, isLoading } = useLoading();
 
   const fetchEmployees = async () => {
     show("Fetching employees...");
-  
+
     try {
       // 1. Fetch employees
-      const { data: employees, error: empError } = await supabase
-        .from("employees")
-        .select(`
+      const { data: employees, error: empError } = await supabase.from(
+        "employees"
+      ).select(`
           id,
           user_id,
           first_name,
@@ -39,20 +39,20 @@ const Employees = () => {
           shift:shift_id (id, name),
           role:role_id (id, name)
         `);
-  
+
       if (empError) throw empError;
-  
+
       // 2. Fetch all profiles
       const { data: profiles, error: profileError } = await supabase
         .from("profiles")
         .select(`id, email, avatar`);
-  
+
       if (profileError) throw profileError;
-  
+
       // 3. Combine employees + profiles by user_id
       const formatted = employees.map((emp) => {
         const profile = profiles.find((p) => p.id === emp.user_id);
-  
+
         return {
           ...emp,
           email: profile?.email || "—",
@@ -68,7 +68,7 @@ const Employees = () => {
           shift: emp.shift?.name || "—",
         };
       });
-  
+
       setEmployee(formatted);
       console.log("Formatted data:", formatted);
     } catch (error) {
@@ -78,10 +78,6 @@ const Employees = () => {
       hide();
     }
   };
-  
-  
-
-
 
   const handleDelete = async (employee_id) => {
     showDelete({
@@ -90,24 +86,62 @@ const Employees = () => {
         "Are you sure you want to delete this employee? This action cannot be undone.",
       onConfirm: async () => {
         try {
-          const response = await fetch(`/api/employee/delete-employee/${employee_id}`, {
-            method: "DELETE",
-          });
+          // 1. Fetch the employee to get the related user_id
+          const { data: employee, error: fetchError } = await supabase
+            .from('employees')
+            .select('user_id')
+            .eq('id', employee_id)
+            .single();
   
-          const result = await response.json();
-  
-          if (!response.ok) {
-            throw new Error(result?.error || "Something went wrong");
+          if (fetchError || !employee) {
+            console.error("Employee fetch error:", fetchError);
+            showAlert("❌ Employee not found", "error");
+            return;
           }
   
+          const userId = employee.user_id;
+  
+          // 2. Delete from employees table
+          const { error: empError } = await supabase
+            .from('employees')
+            .delete()
+            .eq('id', employee_id);
+  
+          if (empError) {
+            console.error("Delete from employees table failed:", empError);
+            showAlert("❌ Failed to delete employee record", "error");
+            return;
+          }
+  
+          // 3. Delete from profiles table
+          const { error: profileError } = await supabase
+            .from('profiles')
+            .delete()
+            .eq('id', userId);
+  
+          if (profileError) {
+            console.error("Delete from profiles table failed:", profileError);
+            showAlert("⚠️ Deleted employee but failed to remove profile", "warning");
+          }
+  
+          // 4. (Optional) Delete from Supabase Auth
+          const { error: authError } = await supabase.auth.admin.deleteUser(userId);
+          if (authError) {
+            console.error("Auth user deletion failed:", authError);
+            showAlert("⚠️ Profile deleted, but failed to remove auth user", "warning");
+          }
+  
+          // 5. Update local state and show success
           setEmployee((prev) => prev.filter((e) => e.id !== employee_id));
           showAlert("✅ Employee deleted successfully", "success");
-          fetchUsers(); 
+          fetchUsers();
+  
         } catch (error) {
+          console.error("Unexpected error during deletion:", error);
           showAlert("❌ Failed to delete employee", "error");
         }
       },
-      onCancel: () => showAlert("❎ Cancelled", "info"),
+      onCancel: () => showAlert("❎ Deletion cancelled", "info"),
     });
   };
 
@@ -121,7 +155,7 @@ const Employees = () => {
         : true;
     return matchesSearch && matchesRole && matchesStatus;
   });
-  
+
   const columns = [
     { key: "user", name: "Full Name" },
     { key: "department", name: "Department" },
@@ -145,9 +179,8 @@ const Employees = () => {
     salary: `₱${employee.salary.toLocaleString()}`,
     status: employee.status ? "Active" : "Inactive",
   }));
-  
 
-  console.log('table data:', tableData)
+  console.log("table data:", tableData);
 
   useEffect(() => {
     fetchEmployees();
@@ -180,10 +213,9 @@ const Employees = () => {
     setFilters((prev) => ({ ...prev, [key]: val }));
   };
 
-
   return (
     <div className="">
-      <CardList  employeeData ={employee}/>
+      <CardList employeeData={employee} />
 
       <SewerTable
         data={tableData}

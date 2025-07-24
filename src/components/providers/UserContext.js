@@ -13,7 +13,6 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const fetchSupabaseUser = async () => {
       const { data, error } = await supabase.auth.getUser();
-      console.log('data in provider:',data)
 
       if (error || !data?.user) {
         console.error("❌ No authenticated user found", error);

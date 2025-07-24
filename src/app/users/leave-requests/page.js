@@ -1,9 +1,9 @@
 import React from 'react'
 
-const ResetLink = () => {
+const leaveRequestPage = () => {
   return (
     <div>page</div>
   )
 }
 
-export default ResetLink
+export default leaveRequestPage
