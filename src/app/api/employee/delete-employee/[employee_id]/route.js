@@ -9,7 +9,6 @@ export async function DELETE(request, { params }) {
   const { employee_id } = params;
 
   try {
-    // 1. Get user_id from employee
     const { data: employee, error: fetchError } = await supabase
       .from('employees')
       .select('user_id')
@@ -36,10 +35,11 @@ export async function DELETE(request, { params }) {
     await supabase.from('profiles').delete().eq('id', userId);
 
     // 4. (Optional) Delete from Supabase Auth
-    // await supabase.auth.admin.deleteUser(userId);
+    await supabase.auth.admin.deleteUser(userId);
 
     return Response.json({ message: 'Employee deleted successfully' }, { status: 200 });
-  } catch (error) {
+  } 
+  catch (error) {
     console.error('Server error:', error);
     return Response.json({ error: 'Internal server error' }, { status: 500 });
   }

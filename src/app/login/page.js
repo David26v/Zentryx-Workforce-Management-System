@@ -64,7 +64,6 @@ const Login = () => {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
-
   const handleSubmit = async () => {
     show("Logging in...");
   
@@ -75,63 +74,65 @@ const Login = () => {
   
       let emailToUse = formData.usernameOrEmail;
   
-      // ✅ Lookup email if user typed in a username
+      // ✅ Handle username login
       if (!formData.usernameOrEmail.includes("@")) {
-        const { data: profile, error } = await supabase
+        const { data: profileLookup, error } = await supabase
           .from("profiles")
           .select("email")
           .eq("username", formData.usernameOrEmail)
           .single();
   
-        if (error || !profile?.email) {
+        if (error || !profileLookup?.email) {
           show("Login Failed", "Invalid username or account not found.");
+          console.error("Username lookup error:", error);
           return;
         }
   
-        emailToUse = profile.email;
+        emailToUse = profileLookup.email;
       }
   
-      // ✅ Sign in with Supabase Auth
+      // ✅ Attempt login
       const { data, error } = await supabase.auth.signInWithPassword({
         email: emailToUse,
         password: formData.password,
       });
   
-      if (error || !data.session) {
+      console.log("signInWithPassword data:", data);
+      console.log("signInWithPassword error:", error);
+  
+      if (error || !data?.session?.user) {
         show("Login Failed", error?.message || "No session returned.");
         return;
       }
   
       const user = data.session.user;
   
-      // ✅ Get user role from `profiles` (make sure row exists and policy allows it)
+      // ✅ Fetch profile role
       const { data: profile, error: profileError } = await supabase
         .from("profiles")
         .select("role")
         .eq("id", user.id)
         .single();
-
-
-        console.log("signInWithPassword data:", data);
-        console.log("signInWithPassword error:", error);
   
       if (profileError || !profile?.role) {
         show("Login Failed", "User role not found.");
+        console.error("Profile fetch error:", profileError);
         return;
       }
   
       const role = profile.role;
-      console.log('role login...',role)
+      console.log("Logged-in user role:", role);
   
       show("Success", "Logged in successfully!");
   
-      // ✅ Redirect based on role
+      // ✅ Redirect by role
       if (role === "admin") {
         router.push("/admin/dashboard");
+      } else if (role === "employee") {
+        router.push("/users/dashboard");
       } else {
-        router.push("/user/dashboard");
+        show("Login Failed", `Unknown role: ${role}`);
       }
-  
     } catch (err) {
       console.error("Login error:", err);
       show("Unexpected error", err.message || "Something went wrong.");
@@ -139,6 +140,11 @@ const Login = () => {
       hide();
     }
   };
+  
+
+  const handleForgotPassword = () =>{
+    router.push('/forgotPassword')
+  }
   
   
   return (
@@ -150,7 +156,7 @@ const Login = () => {
       <CurrentTimeDisplay />
 
       {/* Login Card */}
-      <div className="relative w-[60vh] max-w-xlg z-10 h-[100vh]">
+      <div className="relative w-[60vh] max-w-xlg z-10 min-h-auto">
         <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/30 p-8 relative">
           {/* System features accent */}
           <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-green-500 via-purple-500 to-orange-500 rounded-t-3xl"></div>
@@ -304,6 +310,7 @@ const Login = () => {
                 type="button"
                 className="text-sm text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium"
                 disabled={isLoading}
+                onClick={handleForgotPassword}
               >
                 Forgot password?
               </button>

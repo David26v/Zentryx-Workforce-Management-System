@@ -25,6 +25,9 @@ import {
   Bell,
   HelpCircle,
   CalendarCog,
+  Tv,
+  TvMinimalIcon,
+  TvMinimalPlayIcon,
 } from "lucide-react";
 import { useLoading } from "../providers/LoadingProvider";
 
@@ -52,17 +55,16 @@ const Sidebar = ({ isOpen, role }) => {
   const router = useRouter();
   const { show, hide } = useLoading();
 
+  
   const handleItemClick = async (item) => {
     setActiveItem(item.label);
-    show("fetch");
-    try {
-      await new Promise(res => setTimeout(res, 600)); 
-      router.push(item.path);
-    } finally {
+    show("Loading module..."); 
+    await new Promise(res => setTimeout(res, 300));
+    router.push(item.path);
+    setTimeout(() => {
       hide();
-    }
+    }, 300);
   };
-
   
 
   const toggleGroup = (groupName) => {
@@ -78,6 +80,11 @@ const Sidebar = ({ isOpen, role }) => {
 
   const admin = [
     { label: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard", type: "single" },
+    {
+      label: "Live Monitoring", icon: Tv, type: "group", children: [
+        { label: "Monitor", icon: TvMinimalPlayIcon, path: "/admin/live-monitor" },
+      ]
+    },
     {
       label: "User Management", icon: Users, type: "group", children: [
         { label: "Employees", icon: Briefcase, path: "/admin/employees" },
@@ -111,22 +118,22 @@ const Sidebar = ({ isOpen, role }) => {
   ];
 
   const employee = [
-    { label: "Dashboard", icon: LayoutDashboard, path: "/user/dashboard", type: "single" },
+    { label: "Dashboard", icon: LayoutDashboard, path: "/users/dashboard", type: "single" },
     {
       label: "Work Management", icon: ClipboardCheck, type: "group", children: [
-        { label: "My Tasks", icon: ClipboardCheck, path: "/user/tasks" },
-        { label: "Projects", icon: Briefcase, path: "/user/projects" },
+        { label: "My Tasks", icon: ClipboardCheck, path: "/users/task" },
+        { label: "Projects", icon: Briefcase, path: "/users/project" },
       ]
     },
     {
       label: "Personal", icon: User2, type: "group", children: [
-        { label: "Attendance", icon: CalendarDays, path: "/user/attendance" },
-        { label: "Leave Requests", icon: FileClock, path: "/user/leave-requests" },
-        { label: "My Payroll", icon: Wallet, path: "/user/payroll" },
+        { label: "Attendance", icon: CalendarDays, path: "/users/attendance" },
+        { label: "Leave Requests", icon: FileClock, path: "/users/leave-requests" },
+        { label: "My Payroll", icon: Wallet, path: "/users/payroll" },
       ]
     },
-    { label: "Notifications", icon: Bell, path: "/user/notifications", type: "single" },
-    { label: "Help & Support", icon: HelpCircle, path: "/user/support", type: "single" },
+    { label: "Notifications", icon: Bell, path: "/users/notifications", type: "single" },
+    { label: "Help & Support", icon: HelpCircle, path: "/users/support", type: "single" },
     { label: "Settings", icon: Settings, path: "/user/settings", type: "single" },
   ];
 
