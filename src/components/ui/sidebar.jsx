@@ -28,6 +28,7 @@ import {
   Tv,
   TvMinimalIcon,
   TvMinimalPlayIcon,
+  Users2,
 } from "lucide-react";
 import { useLoading } from "../providers/LoadingProvider";
 
@@ -123,6 +124,7 @@ const Sidebar = ({ isOpen, role }) => {
       label: "Work Management", icon: ClipboardCheck, type: "group", children: [
         { label: "My Tasks", icon: ClipboardCheck, path: "/users/task" },
         { label: "Projects", icon: Briefcase, path: "/users/project" },
+        { label: "My Team", icon: Users2, path: "/users/teams" },
       ]
     },
     {
