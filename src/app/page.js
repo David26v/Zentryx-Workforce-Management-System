@@ -8,9 +8,6 @@ import {
   TrendingUp,
   Shield,
   Timer,
-  PlayCircle,
-  Sparkles,
-  Rocket,
   Briefcase,
   Target,
   CheckCircle,
@@ -23,7 +20,6 @@ import { useTheme } from "@/components/providers/themeProvider";
 import HeroSection from "@/components/landing-page-components/HeroSection";
 import AnimatedBackground from "@/components/landing-page-components/AnimateBackGround";
 import AboutUs from "@/components/landing-page-components/AboutUs";
-import BillingSection from "@/components/landing-page-components/BillingSection";
 
 export default function Home() {
   const router = useRouter();
@@ -162,7 +158,7 @@ export default function Home() {
         <FeaturesSection isDarkMode={isDarkMode} />
         
         <AboutUs isDarkMode={isDarkMode} />
-        {/* <BillingSection isDarkMode={isDarkMode} /> */}
+        
         <ContactSection isDarkMode={isDarkMode} />
 
    

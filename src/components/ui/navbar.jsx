@@ -75,12 +75,7 @@ const Navbar = ({ openSideBar ,user }) => {
 
   const unreadCount = notifications.filter(n => n.unread).length;
 
-  const getInitials = (firstName, lastName) => {
-    if (!firstName) return 'U';
-    const first = firstName.charAt(0).toUpperCase();
-    const last = lastName ? lastName.charAt(0).toUpperCase() : '';
-    return first + last;
-  };
+
 
 
   const handleLogout = async () => {
@@ -126,7 +121,7 @@ const Navbar = ({ openSideBar ,user }) => {
           {/* Right side: Dark Mode Toggle, Notification and Avatar */}
           <div className="flex items-center space-x-4">
             {/* Dark Mode Toggle */}
-            <button
+            {/* <button
               onClick={toggleDarkMode}
               className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
               aria-label="Toggle dark mode"
@@ -136,7 +131,7 @@ const Navbar = ({ openSideBar ,user }) => {
               ) : (
                 <FiMoon className="w-5 h-5 text-gray-600" />
               )}
-            </button>
+            </button> */}
 
             {/* Notification Bell */}
             <ZentryNotificationDemo
