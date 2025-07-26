@@ -25,7 +25,7 @@ export default function NotFound() {
         if (isClient) {
             const token = localStorage.getItem("token");
             if (!token) {
-                router.push("/login");
+                router.push("/forms/login");
             }
         }
     }, [router, isClient]);

@@ -82,13 +82,12 @@ const UserPage = () => {
   };
 
   const filteredUsers = users.filter((u) => {
-    const matchesSearch = u.name?.toLowerCase().includes(search.toLowerCase());
+    const matchesSearch = 
+      `${u.first_name} ${u.last_name}`.toLowerCase().includes(search.toLowerCase());
     const matchesRole = filters.role ? u.role === filters.role : true;
-    const matchesPlan = filters.plan ? u.plan === filters.plan : true;
     const matchesStatus = filters.status ? u.status === filters.status : true;
-    return matchesSearch && matchesRole && matchesPlan && matchesStatus;
+    return matchesSearch && matchesRole  && matchesStatus;
   });
-
   const columns = [
     { key: "user", name: "Full Name" },
     { key: "role", name: "ROLE" },
@@ -156,7 +155,7 @@ const UserPage = () => {
         ButtonPlacement={<AddUserModal fetchUser = {fetchUsers} />}
         onDelete={handleDelete}
         onView={(item) => {
-          router.push(`/admin/users/${item.user.user_id}`);
+          router.push(`/admin/user-management/users/${item.user.user_id}`);
         }}
       />
     </div>
