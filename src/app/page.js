@@ -43,7 +43,7 @@ export default function Home() {
   };
 
   const navigateToLogin = () => {
-    router.push("/login");
+    router.push("/forms/login");
   };
 
   const stats = [

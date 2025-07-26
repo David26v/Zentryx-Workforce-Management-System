@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Navbar from "@/components/ui/navbar";
-import Sidebar from "@/components/ui/sidebar";
 import supabase from "@/lib/helper";
+import AdminSidebar from "@/components/ui/AdminSidebar;";
 
 export default function AdminLayout({ children }) {
   const [openSidebar, setOpenSidebar] = useState(true);
@@ -63,7 +63,7 @@ export default function AdminLayout({ children }) {
           openSidebar ? "w-[270px]" : "w-[90px]"
         }`}
       >
-        <Sidebar isOpen={openSidebar} role={role} />
+        <AdminSidebar isOpen={openSidebar} role={role} />
       </div>
 
       {/* Main Layout */}
