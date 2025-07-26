@@ -12,41 +12,13 @@ import supabase from "@/lib/helper";
 const Navbar = ({ openSideBar ,user }) => {
   const [open, setOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
   
   const router = useRouter();
 
-  useEffect(() => {
-    const savedDarkMode = localStorage.getItem('darkMode');
-    if (savedDarkMode) {
-      const isDark = JSON.parse(savedDarkMode);
-      setDarkMode(isDark);
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-      }
-    } 
-    else {
-      const systemDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setDarkMode(systemDarkMode);
-      if (systemDarkMode) {
-        document.documentElement.classList.add('dark');
-      }
-    }
-  }, []);
+
 
  
 
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    localStorage.setItem('darkMode', JSON.stringify(newDarkMode));
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  };
 
   // Mock notifications - replace with actual notifications
   const notifications = [
@@ -121,18 +93,7 @@ const Navbar = ({ openSideBar ,user }) => {
           {/* Right side: Dark Mode Toggle, Notification and Avatar */}
           <div className="flex items-center space-x-4">
             {/* Dark Mode Toggle */}
-            {/* <button
-              onClick={toggleDarkMode}
-              className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-              aria-label="Toggle dark mode"
-            >
-              {darkMode ? (
-                <FiSun className="w-5 h-5 text-yellow-500" />
-              ) : (
-                <FiMoon className="w-5 h-5 text-gray-600" />
-              )}
-            </button> */}
-
+           
             {/* Notification Bell */}
             <ZentryNotificationDemo
               notificationOpen={notificationOpen}
